@@ -1,0 +1,36 @@
+{
+  "class": "StandardOperatingProcedure",
+  "description": "Schema for security procedures and threat addresses.",
+  "properties": [
+    {
+      "name": "SOP_ID",
+      "dataType": ["uuid"],
+      "description": "Unique identifier for the procedure"
+    },
+    {
+      "name": "Threat_ID",
+      "dataType": ["text"],
+      "description": "The MITRE/CVE ID this SOP addresses"
+    },
+    {
+      "name": "URL_Location",
+      "dataType": ["text"],
+      "description": "Local secure path or internal wiki link"
+    },
+    {
+      "name": "Team_Owner",
+      "dataType": ["text"],
+      "description": "The internal department responsible"
+    },
+    {
+      "name": "Access_Level",
+      "dataType": ["int"],
+      "description": "Clearance required to view/execute"
+    },
+    {
+      "name": "Timestamp",
+      "dataType": ["date"],
+      "description": "Last updated date"
+    }
+  ]
+}
