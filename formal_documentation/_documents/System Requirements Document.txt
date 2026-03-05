@@ -1,4 +1,4 @@
-System Requirements Document (SRD): Project Sentinel
+System Requirements Document (SRD): Project Vector_ThreatID
 
 1. Functional Requirements (FR)
 	FR-1: Automated Framework Ingestion: The system must ingest MITRE ATT&CK, CVE, and OWASP data from local JSON/CSV files and convert them into high-dimensional vectors.
@@ -11,4 +11,5 @@ System Requirements Document (SRD): Project Sentinel
 	NFR-1: Air-Gapped Operation: All embedding and vector search operations must run locally without external API calls.
 	NFR-2: Scalability: The system must handle a burst rate of $10,000$ logs per second using a decoupled message broker (Kafka).
 	NFR-3: Latency: End-to-end processing (Ingestion to Alert) must occur in $< 500$ milliseconds.
+
 	NFR-4: Auditability: Every alert must include a "Mathematical Trace"—the exact distance and the top 3 framework matches that triggered the alert.
