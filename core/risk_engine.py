@@ -54,15 +54,9 @@ class RiskEngine:
 			}
 		else:
 			cosine_distance = similarity_results['distances'][0][0]
-			risk_score = round(math.exp(-cosine_distance), 4)
+			tau = 0.65
+			risk_score = round(math.exp(-cosine_distance * tau), 4)
 			is_critical = risk_score >= self.threshold
-
-			# Boosting risk score if any high risk terms are found in logs. Usually, this is compared across a costantly updated lookup table 
-			# boost = 0
-			# high_risk_terms = ["root", "admin", "unauthorized", "brute force", "cve-"]
-			# if any(term in context_block.lower() for term in high_risk_terms):
-			# 	boost = 0.1
-			# final_risk_score = min(risk_score + boost, 1.0)
 
 			return {
 				"risk_score": risk_score,
