@@ -5,8 +5,12 @@ import requests
 from pathlib import Path
 
 class OwaspIngestor:
-	def __init__(self, cache_file="../data/standards_cache.json"):
-		self.cache_path = Path(cache_file)
+	def __init__(self, cache_file="standards_cache.json"):
+		current_dir = os.path.dirname(os.path.abspath(__file__))
+		project_root = os.path.dirname(current_dir)
+		self.file_path = os.path.join(project_root, "data/"+cache_file)
+		
+		self.cache_path = Path(self.file_path)
 		self.one_week = 7 * 24 * 60 * 60  # 604,800 seconds
 
 	def get_owasp_data(self):
@@ -40,7 +44,7 @@ class OwaspIngestor:
 			return data
 		except Exception as e:
 			print(f"[ERROR] Sync failed: {e}. Falling back to old cache if available.")
-            static_list = [{"id": "A01", "name": "Broken Access Control", "keywords": ["unauthorized", "admin", "root", "privilege"]},
-                {"id": "A03", "name": "Injection", "keywords": ["injection", "0x1F0FFF", "exec", "cmd", "script", "hollowing"]},
-                {"id": "A07", "name": "Auth Failures", "keywords": ["failed", "password", "login", "brute", "invalid"]}]
+			static_list = [{"id": "A01", "name": "Broken Access Control", "keywords": ["unauthorized", "admin", "root", "privilege"]},
+				{"id": "A03", "name": "Injection", "keywords": ["injection", "0x1F0FFF", "exec", "cmd", "script", "hollowing"]},
+				{"id": "A07", "name": "Auth Failures", "keywords": ["failed", "password", "login", "brute", "invalid"]}]
 			return json.load(self.cache_path.open()) if self.cache_path.exists() else static_list
