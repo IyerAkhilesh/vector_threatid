@@ -3,12 +3,9 @@ import os
 from typing import List, Dict, Optional
 from ports.vector_store import VectorStorePort
 
-# Final variables 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEFAULT_DB_PATH = os.path.join(PROJECT_ROOT, "vault_storage")
 
 class ChromaAdapter:
-	def __init__(self, collection_name: str = "threat_intel"):
+	def __init__(self, collection_name: str = "vector_threatid_vault"):
 		"""
 		Initializes the local persistent storage.
 		All data remains on-premise in the specified 'path'.
