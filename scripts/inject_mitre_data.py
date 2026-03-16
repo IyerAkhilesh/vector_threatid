@@ -22,102 +22,72 @@ def generate_synthetic_anchors(name, description):
 	return " | ".join(patterns)
 
 def ingest_enriched_data(file_path):
-	db = ChromaAdapter(collection_name="threat_frameworks")
-	
-	# CRITICAL: Clear the old 0.1-score data first to avoid stale matches
-	# print("[*] Clearing old collection to reset similarity baselines...")
-	# db.collection.delete(where={}) 
-
-	with open(file_path, 'r', encoding='utf-8') as f:
-		data = json.load(f)
-
-	techniques = [obj for obj in data.get('objects', []) if obj.get('type') == 'attack-pattern']
-
-	for tech in tqdm(techniques, desc="Building Enriched Vault"):
-		name = tech.get('name')
-		desc = tech.get('description', '')
-		mitre_id = next((r['external_id'] for r in tech.get('external_references', []) if r.get('source_name') == 'mitre-attack'), None)
+	# GitHub Copilot fix: Added comprehensive error handling for file I/O and database operations to prevent crashes and provide informative error messages.
+	try:
+		db = ChromaAdapter(collection_name="threat_frameworks")
 		
-		if not mitre_id: continue
+		# CRITICAL: Clear the old 0.1-score data first to avoid stale matches
+		# print("[*] Clearing old collection to reset similarity baselines...")
+		# db.collection.delete(where={}) 
 
-		# We combine the formal Intel with Log-Speak
-		anchors = generate_synthetic_anchors(name, desc)
-		
-		# This is the 'Rich Document' that ChromaDB will index
-		# By putting Anchors at the START, they get higher weight in many embedding models
-		rich_document = f"MATCH_PATTERN: {anchors} | TECHNIQUE: {name} | DETAILS: {desc[:300]}"
+		with open(file_path, 'r', encoding='utf-8') as f:
+			data = json.load(f)
 
-		db.add_vectors(
-			documents=[rich_document],
-			ids=[mitre_id],
-			metadatas={
+		techniques = [obj for obj in data.get('objects', []) if obj.get('type') == 'attack-pattern']
+
+		# GitHub Copilot fix: Collect documents, IDs, and metadata into lists for batch processing to improve performance instead of adding one by one.
+		docs, ids, metas = [], [], []
+
+		for tech in tqdm(techniques, desc="Building Enriched Vault"):
+			name = tech.get('name')
+			desc = tech.get('description', '')
+			mitre_id = next((r['external_id'] for r in tech.get('external_references', []) if r.get('source_name') == 'mitre-attack'), None)
+			
+			if not mitre_id: continue
+
+			# We combine the formal Intel with Log-Speak
+			anchors = generate_synthetic_anchors(name, desc)
+			
+			# This is the 'Rich Document' that ChromaDB will index
+			# By putting Anchors at the START, they get higher weight in many embedding models
+			rich_document = f"MATCH_PATTERN: {anchors} | TECHNIQUE: {name} | DETAILS: {desc[:300]}"
+
+			docs.append(rich_document)
+			ids.append(mitre_id)
+			metas.append({
 				"id": mitre_id,
 				"status": "Verified",
 				"last_sync": datetime.now().isoformat(),
 				"framework": "MITRE",
 				"type": "Technique"
-			}
-		)
+			})
 
+		# GitHub Copilot fix: Batch upload to ChromaDB in chunks of 100 to prevent memory issues and improve efficiency.
+		batch_size = 100
+		for i in range(0, len(docs), batch_size):
+			db.add_vectors(
+				documents=docs[i:i+batch_size],
+				ids=ids[i:i+batch_size],
+				metadatas=metas[i:i+batch_size]
+			)
 
-"""
-def ingest_mitre_stix(file_path):
-	# 1. Initialize our secure on-prem adapter
-	db = ChromaAdapter(collection_name="threat_frameworks")
-	
-	if not os.path.exists(file_path):
-		print(f"[-] Error: {file_path} not found. Please place the MITRE JSON file there.")
-		return
+		print(f"[+] Success: Ingested {len(docs)} MITRE techniques into the Vault.")
+		# GitHub Copilot fix: Return the count of ingested items for verification.
+		return len(docs)
+	except FileNotFoundError:
+		print(f"[!] Error: File not found.")
+		return 0
+	except json.JSONDecodeError as e:
+		print(f"[!] Error: Invalid JSON in the file: {e}")
+		return 0
+	except Exception as e:
+		print(f"[!] Error during ingestion: {e}")
+		return 0
 
-	print(f"[*] Reading MITRE ATT&CK data from {file_path}...")	
-	with open(file_path, 'r', encoding='utf-8') as f:
-		stix_data = json.load(f)
-
-	# 2. Filter for 'attack-pattern' objects (Techniques)
-	# We ignore relationships and other STIX noise for the vector anchors
-	techniques = [
-		obj for obj in stix_data.get('objects', []) 
-		if obj.get('type') == 'attack-pattern' and not obj.get('revoked', False)
-	]
-
-	docs, ids, metas = [], [], []
-
-	for tech in tqdm(techniques, desc="Vectorizing Techniques"):
-		name = tech.get('name')
-		description = tech.get('description', 'No description provided.')
-		# Get the MITRE ID (e.g., T1110) from external references
-		ext_refs = tech.get('external_references', [])
-		mitre_id = next((ref['external_id'] for ref in ext_refs if ref.get('source_name') == 'mitre-attack'), "N/A")
-
-		if mitre_id == "N/A": continue
-
-		# We create a 'Semantic Anchor': Name + Description
-		# This is what the embedding model uses to create the 384-dimensional vector
-		docs.append(f"Technique: {name}. Context: {description}")
-		ids.append(mitre_id)
-		metas.append({
-			"id": mitre_id,
-			"name": name,
-			"framework": "MITRE",
-			"type": "Technique"
-		})
-
-	# 3. Batch Upload to local ChromaDB
-	# We use chunks of 100 to prevent memory spikes in the venv
-	batch_size = 100
-	for i in range(0, len(docs), batch_size):
-		db.add_vectors(
-			documents=docs[i:i+batch_size],
-			ids=ids[i:i+batch_size],
-			metadatas=metas[i:i+batch_size]
-		)
-
-	print(f"[+] Success: Ingested {len(docs)} MITRE techniques into the Vault.")
-"""
 if __name__ == "__main__":
 	MITRE_PATH = os.path.join("data", "enterprise-attack.json")
-	ingest_enriched_data(MITRE_PATH)
-
-# !!!!!!!!!! THIS IS TO CLEAR THE DB. DO NOT EXECUTE WITHOUT PERMISSION !!!!!!!!!!!!!
-	# db = ChromaAdapter(collection_name="threat_frameworks")
-	# db.collection.delete(where={"id": {"$ne": "NULL_ID_RESET_TRIGGER"}})
+	ingested_count = ingest_enriched_data(MITRE_PATH)
+	if ingested_count > 0:
+		print(f"Ingestion completed successfully with {ingested_count} techniques.")
+	else:
+		print("Ingestion failed.")

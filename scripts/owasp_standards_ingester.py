@@ -32,8 +32,8 @@ class OwaspIngestor:
 			response = requests.get(self.owasp_url, timeout=10)
 			response.raise_for_status() # Checks if the URL exists
 
-			# GitHub sometimes returns HTML even for raw links if there's a redirect
-			if "<html>" in res.text.lower():
+			# GitHub Copilot fix: Corrected variable name from 'res' to 'response' to reference the correct object.
+			if "<html>" in response.text.lower():
 				raise ValueError("Received HTML instead of JSON")
 
 			data = response.json()['categories']

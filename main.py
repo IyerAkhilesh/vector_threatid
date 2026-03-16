@@ -5,29 +5,30 @@ from core.log_aggregator_preprocessor import LogAggregator
 import sys
 import re
 import csv
+import os  # GitHub Copilot optimization: Added missing import for os.path.isfile used in append_to_risk_register.
+
+# GitHub Copilot optimization: Precompile regex patterns for better performance in extract_ip_from_log_line.
+FIREWALL_IP_REGEX = re.compile(r'SRC=(\d{1,3}(?:\.\d{1,3}){3})\s')
+SSH_FTP_IP_REGEX = re.compile(r'from\s+(\d{1,3}(?:\.\d{1,3}){3})')
+CUSTOM_APP_IP_REGEX = re.compile(r'Source:\s+(\d{1,3}(?:\.\d{1,3}){3})')
 
 def extract_ip_from_log_line(log_line: str) -> str:
-	# From Firewall logs
-	ip_match = re.search(r'SRC=(\d{1,3}(?:\.\d{1,3}){3})\s', log_line)
-	if ip_match:
+	# From Firewall logs. " := " assigns and compares in one operation, so we can check and extract in one step.
+	if ip_match := FIREWALL_IP_REGEX.search(log_line):
 		return ip_match.group(1)
 
 	# From SSH/FTP logs
-	ip_match = re.search(r'from\s+(\d{1,3}(?:\.\d{1,3}){3})', log_line)
-	if ip_match:
+	elif ip_match := SSH_FTP_IP_REGEX.search(log_line):
 		return ip_match.group(1)
 
 	# From custom app logs
-	ip_match = re.search(r'Source:\s+(\d{1,3}(?:\.\d{1,3}){3})', log_line)
-	if ip_match:
+	elif ip_match := CUSTOM_APP_IP_REGEX.search(log_line):
 		return ip_match.group(1)	
 
 	# If nothing else, return None
-	return None
+	else:
+		return None
 
-def append_to_risk_register(analysis, ip, impact_value = 0.9, asset_value = 50000):
-	import csv
-import os
 
 def append_to_risk_register(analysis, ip, impact_value=0.9, asset_value=50000) -> bool:
 	"""
@@ -51,7 +52,7 @@ def append_to_risk_register(analysis, ip, impact_value=0.9, asset_value=50000) -
 		
 		new_entry = {
 			"Risk ID": f"RS-{analysis['matched_technique']['id']}",
-			"Risk Description": f"Detected {analysis['matched_technique']} from {ip}",
+			"Risk Description": f"Detected {analysis['matched_technique'].get('name', 'Unknown Technique')} from {ip}",  # GitHub Copilot optimization: Use technique name instead of dict for readable description.
 			"Risk Category": "Technical/Cyber",
 			"Probability": probability,
 			"Impact": impact_value,
@@ -72,17 +73,17 @@ def append_to_risk_register(analysis, ip, impact_value=0.9, asset_value=50000) -
 				writer.writeheader()
 			writer.writerow(new_entry)
 		return True
-	except FileNotFoundError as fe:
-		print(f"[!] ERROR: Exception - {fe}")
+	except FileNotFoundError:
+		print("[!] ERROR: File not found.")  # GitHub Copilot optimization: Generic error message for security.
 		return False
-	except PermissionError as pe:
-		print(f"[!] ERROR: Exception - {pe}")
+	except PermissionError:
+		print("[!] ERROR: Permission denied.")  # GitHub Copilot optimization: Generic error message for security.
 		return False
-	except IOError as ie:
-		print(f"[!] ERROR: Exception -  {ie}")
+	except IOError:
+		print("[!] ERROR: I/O error occurred.")  # GitHub Copilot optimization: Generic error message for security.
 		return False
-	except Exception as e: 
-		print(f"[!] ERROR: Exception -  {e}")
+	except Exception: 
+		print("[!] ERROR: An unexpected error occurred.")  # GitHub Copilot optimization: Generic error message for security.
 		return False
 
 
@@ -105,40 +106,25 @@ def main():
 	risk_engine = RiskEngine(vector_store = chroma_adapter, threshold = 0.7)
 	log_aggregator = LogAggregator(window_size = 3)
 
-	# logs = [
-	# ("10.0.0.5", "cmd: powershell.exe execution started with hidden window"),
- #	("10.0.0.5", "powershell: webclient object created for remote download"),
- #	("10.0.0.5", "ALERT: Unauthorized process hollowing and memory injection detected in system process. Diagnostic code: 0x1F0FFF."),
- #	("10.0.0.5", "proxy: outbound email sent to external mailbox with sensisitve file."),
- #	("10.0.0.5", "Security Alert: Unauthorized memory access and process injection attempt into svchost.exe using remote thread creation.")
-	# ]
-
-
 	print("\n" + "="*60)
 	print("STREAMING SECURITY TELEMETRY...")
 	print("="*60)
 
 	# 3. Process logs
 	with open("./data/vector_threatid_test_50k.log", "r") as logs:
-		print(f"Starting analysis ...")
+		print("Starting analysis ...")
 		for log_line in logs:
 			ip = extract_ip_from_log_line(log_line)
 			if ip:
 				context_block = log_aggregator.aggregate_logs(ip, log_line)
 				analysis = risk_engine.evaluate_log(context_block)
 
-				status = append_to_risk_register(analysis, ip)
-
-				print(f"Analyzing Window: {context_block}")
-				print(f"Risk Score: {analysis['risk_score']}")
-
 				if analysis["trigger_rag"]:
-					# 3. Print the Context Block to verify aggregation is working
 					print(f"Analyzing Window: {context_block}")
 					print(f"Risk Score: {analysis['risk_score']}")
 					print(f"🚨 ALERT: Pattern detected! Similarity: {analysis['risk_score']}")
 
-					mitre_id = analysis['matched_technique']
+					mitre_id = analysis['matched_technique']['id']  # GitHub Copilot optimization: Extract id directly.
 					print(f"\n🚨 [THREAT DETECTED] Match: {mitre_id}")
 					
 					status = append_to_risk_register(analysis, ip)
@@ -160,5 +146,5 @@ if __name__ == '__main__':
 	try:
 		main()
 	except KeyboardInterrupt:
-		print(f"\n[!] Keyboard interrupt! Exitinggg...")
+		print("\n[!] Keyboard interrupt! Exiting...")  # GitHub Copilot optimization: Corrected typo in message.
 		sys.exit(0)
