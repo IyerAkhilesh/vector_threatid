@@ -32,7 +32,6 @@ class OwaspIngestor:
 			response = requests.get(self.owasp_url, timeout=10)
 			response.raise_for_status() # Checks if the URL exists
 
-			# GitHub Copilot fix: Corrected variable name from 'res' to 'response' to reference the correct object.
 			if "<html>" in response.text.lower():
 				raise ValueError("Received HTML instead of JSON")
 

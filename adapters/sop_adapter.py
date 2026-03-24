@@ -1,4 +1,4 @@
-# project_sentinel/adapters/sop_adapter.py
+# vector_threatidtinel/adapters/sop_adapter.py
 from typing import Dict, Optional
 
 class SOPAdapter:

@@ -22,7 +22,6 @@ def generate_synthetic_anchors(name, description):
 	return " | ".join(patterns)
 
 def ingest_enriched_data(file_path):
-	# GitHub Copilot fix: Added comprehensive error handling for file I/O and database operations to prevent crashes and provide informative error messages.
 	try:
 		db = ChromaAdapter(collection_name="threat_frameworks")
 		
@@ -35,7 +34,6 @@ def ingest_enriched_data(file_path):
 
 		techniques = [obj for obj in data.get('objects', []) if obj.get('type') == 'attack-pattern']
 
-		# GitHub Copilot fix: Collect documents, IDs, and metadata into lists for batch processing to improve performance instead of adding one by one.
 		docs, ids, metas = [], [], []
 
 		for tech in tqdm(techniques, desc="Building Enriched Vault"):
@@ -62,7 +60,6 @@ def ingest_enriched_data(file_path):
 				"type": "Technique"
 			})
 
-		# GitHub Copilot fix: Batch upload to ChromaDB in chunks of 100 to prevent memory issues and improve efficiency.
 		batch_size = 100
 		for i in range(0, len(docs), batch_size):
 			db.add_vectors(
@@ -72,7 +69,6 @@ def ingest_enriched_data(file_path):
 			)
 
 		print(f"[+] Success: Ingested {len(docs)} MITRE techniques into the Vault.")
-		# GitHub Copilot fix: Return the count of ingested items for verification.
 		return len(docs)
 	except FileNotFoundError:
 		print(f"[!] Error: File not found.")
