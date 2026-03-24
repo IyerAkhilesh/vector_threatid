@@ -1,6 +1,7 @@
 import chromadb
 import os
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
+from chromadb.api.models.Collection import QueryResult
 from ports.vector_store import VectorStorePort
 
 
@@ -17,7 +18,7 @@ class ChromaAdapter:
 		self.client = chromadb.PersistentClient(path=self.db_path)
 		self.collection = self.client.get_or_create_collection(name=collection_name, metadata = {"hnsw:space": "cosine"})	# Explicitly setting the search metric
 
-	def add_vectors(self, documents: List[str], ids: List[str], metadatas: List[Dict]):
+	def add_vectors(self, documents: List[str], ids: List[str], metadatas: List[Any]) -> None:
 		"""
 		Adds frameworks like MITRE ATT&CK, CVE/CWE, OWASP, ISO, NIST, OSINT, etc. or logs to the vector space.
 		Note: We don't pass embeddings here because we'll handle 
@@ -26,7 +27,7 @@ class ChromaAdapter:
 		self.collection.add(documents = documents, ids = ids, metadatas = metadatas)
 
 
-	def query_similarity(self, query_text: str, n_results: int = 1, metadata_filter: Optional[Dict] = None) -> Dict:
+	def query_similarity(self, query_text: str, n_results: int = 1, metadata_filter: Optional[Dict] = None) -> QueryResult:
 		"""
 		The 'Detection' engine. 
 		metadata_filter allows for strict scoping (e.g., {"Access_Level": 3}).

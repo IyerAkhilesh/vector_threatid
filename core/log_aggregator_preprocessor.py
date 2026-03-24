@@ -22,7 +22,7 @@ class LogAggregator:
 		#Remove PIDs and hexcodes 
 		unsanitized_log = re.sub(r'\[\d+\]|0x[0-9A-Fa-f]+', '', unsanitized_log)
 
-		# GitHub Copilot fix: Added return statement to return the sanitized log string, as the function was modifying the input but not returning it.
+
 		return unsanitized_log.strip()
 
 
@@ -30,7 +30,7 @@ class LogAggregator:
 		if source_ip not in self.context_windows:
 			self.context_windows[source_ip] = deque(maxlen = self.window_size)
 
-		# GitHub Copilot fix: Sanitize the log line before aggregating to remove noise like timestamps and PIDs.
+
 		sanitized_log = self.sanitize_log(current_log_line)
 		self.context_windows[source_ip].append(sanitized_log)
 		# print(f"In aggregator - IP: {source_ip}, Log Line: {current_log_line}, \nContext Block: {self.context_windows}")

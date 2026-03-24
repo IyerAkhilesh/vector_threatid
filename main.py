@@ -5,9 +5,7 @@ from core.log_aggregator_preprocessor import LogAggregator
 import sys
 import re
 import csv
-import os  # GitHub Copilot optimization: Added missing import for os.path.isfile used in append_to_risk_register.
-
-# GitHub Copilot optimization: Precompile regex patterns for better performance in extract_ip_from_log_line.
+import os  
 FIREWALL_IP_REGEX = re.compile(r'SRC=(\d{1,3}(?:\.\d{1,3}){3})\s')
 SSH_FTP_IP_REGEX = re.compile(r'from\s+(\d{1,3}(?:\.\d{1,3}){3})')
 CUSTOM_APP_IP_REGEX = re.compile(r'Source:\s+(\d{1,3}(?:\.\d{1,3}){3})')
@@ -27,7 +25,7 @@ def extract_ip_from_log_line(log_line: str) -> str:
 
 	# If nothing else, return None
 	else:
-		return None
+		return ""
 
 
 def append_to_risk_register(analysis, ip, impact_value=0.9, asset_value=50000) -> bool:
@@ -74,16 +72,16 @@ def append_to_risk_register(analysis, ip, impact_value=0.9, asset_value=50000) -
 			writer.writerow(new_entry)
 		return True
 	except FileNotFoundError:
-		print("[!] ERROR: File not found.")  # GitHub Copilot optimization: Generic error message for security.
+		print("[!] ERROR: File not found.")  
 		return False
 	except PermissionError:
-		print("[!] ERROR: Permission denied.")  # GitHub Copilot optimization: Generic error message for security.
+		print("[!] ERROR: Permission denied.")  
 		return False
 	except IOError:
-		print("[!] ERROR: I/O error occurred.")  # GitHub Copilot optimization: Generic error message for security.
+		print("[!] ERROR: I/O error occurred.")  
 		return False
 	except Exception: 
-		print("[!] ERROR: An unexpected error occurred.")  # GitHub Copilot optimization: Generic error message for security.
+		print("[!] ERROR: An unexpected error occurred.")  
 		return False
 
 

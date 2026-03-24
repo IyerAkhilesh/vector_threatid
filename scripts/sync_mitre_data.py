@@ -1,4 +1,3 @@
-# project_sentinel/scripts/sync_mitre.py
 import os
 import json
 import requests
@@ -24,7 +23,7 @@ def fetch_latest_mitre() -> str:
 		return LOCAL_FILE
 	except requests.exceptions.RequestException as e:
 		print(f"[-] Network Error: {e}. Falling back to existing local file if available.")
-		return LOCAL_FILE if os.path.exists(LOCAL_FILE) else None
+		return LOCAL_FILE if os.path.exists(LOCAL_FILE) else ""
 
 def generate_log_prototypes(name, description):
 	"""
@@ -45,8 +44,8 @@ def generate_log_prototypes(name, description):
 def modify_and_sync_vault():
 	file_path = fetch_latest_mitre()
 	if not file_path:
-		 print("[!] CRITICAL ERROR: No MITRE framework data available to sync")
-		 return
+		print("[!] CRITICAL ERROR: No MITRE framework data available to sync")
+		return
 
 	"""Parses, modifies, and updates the local Vector DB."""
 	db = ChromaAdapter(collection_name="threat_frameworks")
