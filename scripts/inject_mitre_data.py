@@ -3,12 +3,16 @@ import os
 import sys
 from tqdm import tqdm
 from datetime import datetime 
+import security_utils
+from security_utils import SECURITY_LOGGER
+
+logger = SECURITY_LOGGER
 # Adding project root to path so we can import our adapters
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from adapters.chroma_adapter import ChromaAdapter
 
 
-def generate_synthetic_anchors(name, description):
+def generate_synthetic_anchors(name, description) -> str:
 	"""
 	Creates a 'Log-Like' string for the Vector DB to find.
 	"""
@@ -21,15 +25,16 @@ def generate_synthetic_anchors(name, description):
 	]
 	return " | ".join(patterns)
 
-def ingest_enriched_data(file_path):
+def ingest_enriched_data(file_path) -> int:
 	try:
 		db = ChromaAdapter(collection_name="threat_frameworks")
 		
 		# CRITICAL: Clear the old 0.1-score data first to avoid stale matches
-		# print("[*] Clearing old collection to reset similarity baselines...")
-		# db.collection.delete(where={}) 
+		# print -> Clearing old collection to reset similarity baselines 
+		# db<dot>collection<dot>delete<parenthesis>where<equals><empty curly brackets><parenthesis> 
 
-		with open(file_path, 'r', encoding='utf-8') as f:
+		file = security_utils.get_safe_file_path(file_path)
+		with open(file, 'r', encoding='utf-8') as f:
 			data = json.load(f)
 
 		techniques = [obj for obj in data.get('objects', []) if obj.get('type') == 'attack-pattern']
@@ -68,22 +73,22 @@ def ingest_enriched_data(file_path):
 				metadatas=metas[i:i+batch_size]
 			)
 
-		print(f"[+] Success: Ingested {len(docs)} MITRE techniques into the Vault.")
+		logger.info(f"Success: Ingested {len(docs)} MITRE techniques into the Vault.")
 		return len(docs)
 	except FileNotFoundError:
-		print(f"[!] Error: File not found.")
+		logger.error("Error: File not found.")
 		return 0
 	except json.JSONDecodeError as e:
-		print(f"[!] Error: Invalid JSON in the file: {e}")
+		logger.error(f"Error: Invalid JSON in the file: {e}")
 		return 0
 	except Exception as e:
-		print(f"[!] Error during ingestion: {e}")
+		logger.error(f"Error during ingestion: {e}")
 		return 0
 
 if __name__ == "__main__":
-	MITRE_PATH = os.path.join("data", "enterprise-attack.json")
+	MITRE_PATH = "data/mitre_enterprise_attack.json"
 	ingested_count = ingest_enriched_data(MITRE_PATH)
 	if ingested_count > 0:
-		print(f"Ingestion completed successfully with {ingested_count} techniques.")
+		logger.info(f"Ingestion completed successfully with {ingested_count} techniques.")
 	else:
-		print("Ingestion failed.")
+		logger.error("Ingestion failed.")
