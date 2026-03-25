@@ -28,6 +28,7 @@ class OwaspIngestor:
 		# 2. Otherwise, fetch and refresh
 		return self._refresh_cache()
 
+
 	def _refresh_cache(self):
 		self.owasp_url = "https://raw.githubusercontent.com/STEVNS/owasp-top-10-json/main/owasp_top_10_2021.json"
 		logger.warning("Local cache expired or missing. Fetching fresh OWASP Top 10...")

@@ -4,6 +4,7 @@ from security_utils import SECURITY_LOGGER
 
 logger = SECURITY_LOGGER
 
+
 class SOPAdapter:
 	def __init__(self, vector_store):
 		"""

@@ -4,6 +4,7 @@ from security_utils import SECURITY_LOGGER
 
 logger = SECURITY_LOGGER
 
+
 def seed():
 		current_dir = os.path.dirname(os.path.abspath(__file__))
 		project_root = os.path.dirname(current_dir)

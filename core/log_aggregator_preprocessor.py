@@ -7,6 +7,7 @@ from security_utils import SECURITY_LOGGER
 
 logger = SECURITY_LOGGER
 
+
 class LogAggregator:
 	# Window size is up for change
 	def __init__(self, window_size = 5):

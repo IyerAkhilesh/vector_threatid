@@ -11,7 +11,6 @@ logger = SECURITY_LOGGER
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from adapters.chroma_adapter import ChromaAdapter
 
-
 def generate_synthetic_anchors(name, description) -> str:
 	"""
 	Creates a 'Log-Like' string for the Vector DB to find.

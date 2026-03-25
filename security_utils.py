@@ -77,7 +77,6 @@ def validate_and_sanitize_log_line(log_line: str, max_length: int = 4096) -> Opt
     
     return log_line
 
-
 def validate_ip_address(ip_str: str) -> Optional[str]:
     """Validate and normalize IP address."""
     if not ip_str or not isinstance(ip_str, str):
