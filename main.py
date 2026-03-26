@@ -11,7 +11,6 @@ import re
 import csv
 import os
 
-
 logger = SECURITY_LOGGER
 
 FIREWALL_IP_REGEX = re.compile(r'SRC=(\d{1,3}(?:\.\d{1,3}){3})\s')

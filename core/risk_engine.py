@@ -6,7 +6,6 @@ from security_utils import SECURITY_LOGGER
 
 logger = SECURITY_LOGGER
 
-
 class RiskEngine:
 	# Threshold here is up for change
 	def __init__(self, vector_store, threshold: float = 0.7):

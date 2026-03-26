@@ -7,6 +7,7 @@ import security_utils
 from security_utils import SECURITY_LOGGER
 
 logger = SECURITY_LOGGER
+
 # Adding project root to path so we can import our adapters
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from adapters.chroma_adapter import ChromaAdapter

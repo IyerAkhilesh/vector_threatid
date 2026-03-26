@@ -12,6 +12,7 @@ from security_utils import create_secure_session, get_safe_file_path, SECURITY_L
 
 logger = SECURITY_LOGGER
 
+
 # Constants
 MITRE_URL = "https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json"
 LOCAL_FILE = "data/mitre_enterprise_attack.json"

@@ -19,7 +19,6 @@ import time
 # Suppress verbose urllib3 connection retry warnings
 logging.getLogger("urllib3.connectionpool").setLevel(logging.ERROR)
 
-
 # ============================================================================
 # 1. SECURITY LOGGING SETUP
 # ============================================================================

@@ -11,6 +11,7 @@ import time
 
 logger = SECURITY_LOGGER
 
+
 def rate_limit(max_calls: int, time_window: int):
     """Decorator to rate limit function calls."""
     def decorator(func):
@@ -64,7 +65,7 @@ class ChromaAdapter:
 		self.collection.add(documents = documents, ids = ids, metadatas = metadatas)
 		logger.info(f"Added {len(documents)} vectors to collection {self.collection.name}")
 
-	@rate_limit(max_calls=100, time_window=60)
+	@rate_limit(max_calls=5000, time_window=60)
 	def query_similarity(self, query_text: str, n_results: int = 1, metadata_filter: Optional[Dict] = None) -> QueryResult:
 		"""
 		The 'Detection' engine. 
