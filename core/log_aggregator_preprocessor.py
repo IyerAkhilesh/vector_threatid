@@ -3,9 +3,12 @@ Since single logs are often benign but sequences are malicious, we need a Pre-Pr
 """
 from collections import deque
 import re
+from security_utils import SECURITY_LOGGER
+
+logger = SECURITY_LOGGER
 
 class LogAggregator:
-	# Windows size is up for change
+	# Window size is up for change
 	def __init__(self, window_size = 5):
 		# Stores last N logs per source ip or other identifier to provide multi-line context
 		self.context_windows = {}
@@ -30,9 +33,7 @@ class LogAggregator:
 		if source_ip not in self.context_windows:
 			self.context_windows[source_ip] = deque(maxlen = self.window_size)
 
-
 		sanitized_log = self.sanitize_log(current_log_line)
 		self.context_windows[source_ip].append(sanitized_log)
-		# print(f"In aggregator - IP: {source_ip}, Log Line: {current_log_line}, \nContext Block: {self.context_windows}")
-		# Merging the context window into a single semantic block
+		logger.debug(f"Aggregated log for IP={source_ip}, window_size={len(self.context_windows[source_ip])}")
 		return " | ".join(list(self.context_windows[source_ip]))

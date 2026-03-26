@@ -1,5 +1,8 @@
 import os
 import chromadb
+from security_utils import SECURITY_LOGGER
+
+logger = SECURITY_LOGGER
 
 def seed():
 		current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -34,7 +37,7 @@ def seed():
 				ids=[tech["id"]],
 				metadatas=[{"type": "technique_narrative"}]
 			)
-		print(f"[*] Vector_ThreatID Vault seeded with {len(techniques)} procedural narratives.")
+		logger.info(f"Vector_ThreatID Vault seeded with {len(techniques)} procedural narratives.")
 
 if __name__ == "__main__":
 	seed()

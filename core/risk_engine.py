@@ -1,6 +1,10 @@
 from typing import List, Dict
 from scripts.owasp_standards_ingester import OwaspIngestor
 import math
+from typing import Dict, List, Optional, Any
+from security_utils import SECURITY_LOGGER
+
+logger = SECURITY_LOGGER
 
 class RiskEngine:
 	# Threshold here is up for change
@@ -11,10 +15,10 @@ class RiskEngine:
 		# Ingest the OWASP standards once (they load from the cache if its < 7 days old)
 		owasp_ingester = OwaspIngestor()
 		self.owasp_standards = owasp_ingester.get_owasp_data()
-		print(f"RiskEngine online with {len(self.owasp_standards)} OWASP categories loaded.")
+		logger.info(f"RiskEngine online with {len(self.owasp_standards)} OWASP categories loaded.")
 
 
-	def _get_semantic_anchor(self, context_block):
+	def _get_semantic_anchor(self, context_block) -> tuple[Optional[str], Optional[str]]:
 		"""
 		Dynamically scans the log for OWASP keywords to 'anchor' the vector query.
 		This provides the semantic 'hint' ChromaDB needs to break the 0.5 score barrier.
@@ -26,7 +30,7 @@ class RiskEngine:
 				return category['id'], category['name']
 		return None, None
 
-	def evaluate_log(self, context_block: str) -> Dict:
+	def evaluate_log(self, context_block: str) -> Dict[str, Any]:
 		"""
 		Analyzes a log line, calculates distance using Exponential Distance Scaling, and checks for RAG trigger.
 		"""
@@ -37,7 +41,7 @@ class RiskEngine:
 		if category_id:
 			# We prepend the OWASP standard to the context block to make the vector come nearer to the MITRE neighbour
 			search_query = f"OWASP {category_id}: {category_name} | {context_block}"
-		print(f"Search query - {search_query}")
+		logger.debug(f"Search query - {search_query}")
 		# Search the framework table for similarity
 		similarity_results = self.store.query_similarity(
 			query_text = search_query,
