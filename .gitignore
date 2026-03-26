@@ -26,7 +26,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-.vscode
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -136,6 +136,10 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+# Resource files
+*.svg
+*.md
+
 # Environments
 .env
 .envrc
@@ -210,3 +214,8 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Vault files
+**/vault_storage/*
+
+**/.vscode/*
