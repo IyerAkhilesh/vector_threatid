@@ -159,9 +159,3 @@ if __name__ == '__main__':
 	except KeyboardInterrupt:
 		logger.info("\n[*] Keyboard interrupt! Exiting...")
 		sys.exit(0)
-if __name__ == '__main__':
-	try:
-		main()
-	except KeyboardInterrupt:
-		logger.info("\n[*] Keyboard interrupt! Exiting...")  # GitHub Copilot optimization: Corrected typo in message.
-		sys.exit(0)
