@@ -165,6 +165,9 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+# Vaults
+vault_storage/
+
 # Pyre type checker
 .pyre/
 
