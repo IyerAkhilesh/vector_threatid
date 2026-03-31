@@ -65,9 +65,22 @@ def validate_and_sanitize_log_line(log_line: str, max_length: int = 4096) -> Opt
         return None
     
     if len(log_line) > max_length:
-        SECURITY_LOGGER.warning(f"Log exceeds max length: {len(log_line)} > {max_length}")
-        return None
+        SECURITY_LOGGER.warning(f"Log exceeds max length: {len(log_line)} > {max_length}. Truncating to fit the limit.")
+        log_line = log_line[:max_length]
     
+    # Replace all malicious characters to prevent log injection
+    log_line = log_line.replace('<', '&lt;').replace('>', '&gt;').replace('&', '&amp;')
+
+    # Escape \\ to prevent backslash injection issues in logs
+    log_line = log_line.replace('\\', '\\\\')
+
+    # Use Deterministic Pseudonymization. We can hash IPs or sensitive data if needed, but for now we just log the sanitized version.
+    # The code for that would be something like:
+    # im_port <hash>lib
+    # define pseudonymize<parenthesis>value<colon> str<parenthesis> <arrow> str:
+    #     re_turn <hash>lib<dot>sha256<parenthesis>value<dot>encode<parentheses><parenthesis><dot>hexdigest<parentheses>
+
+
     # Strip whitespace
     log_line = log_line.strip()
     
