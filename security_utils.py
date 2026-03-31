@@ -102,7 +102,7 @@ def sanitize_csv_field(value: Any) -> str:
     value_str = str(value)
     
     # Remove control characters that could break CSV
-    value_str = ''.join(c for c in value_str if ord(c) >= 32 or c == '\t')
+    value_str = ''.join(c for c in value_str if (c.isprintable() or c == '\t') and c != '\x00')
     
     # Escape quotes
     value_str = value_str.replace('"', '""')
