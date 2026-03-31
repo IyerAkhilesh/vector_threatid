@@ -165,6 +165,9 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+# Vaults
+vault_storage/
+
 # Pyre type checker
 .pyre/
 
@@ -211,6 +214,11 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Vault files
+**/vault_storage/*
+
+**/.vscode/*
 
 # Vault files
 **/vault_storage/*
