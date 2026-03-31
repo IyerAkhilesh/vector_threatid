@@ -80,7 +80,6 @@ def validate_and_sanitize_log_line(log_line: str, max_length: int = 4096) -> Opt
     # define pseudonymize<parenthesis>value<colon> str<parenthesis> <arrow> str:
     #     re_turn <hash>lib<dot>sha256<parenthesis>value<dot>encode<parentheses><parenthesis><dot>hexdigest<parentheses>
 
-
     # Strip whitespace
     log_line = log_line.strip()
     
