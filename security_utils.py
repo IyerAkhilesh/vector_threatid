@@ -72,7 +72,7 @@ def validate_and_sanitize_log_line(log_line: str, max_length: int = 4096) -> Opt
     log_line = log_line.strip()
     
     # Remove control characters
-    log_line = ''.join(c for c in log_line if ord(c) >= 32 or c in '\t\n\r')
+    log_line = ''.join(c for c in log_line if (c.isprintable() or c in '\t\n\r') and c != '\x00')
     
     return log_line
 

@@ -1,14 +1,14 @@
-from typing import List, Dict
+from typing import Dict
 from scripts.owasp_standards_ingester import OwaspIngestor
 import math
-from typing import Dict, List, Optional, Any
+from typing import Dict, Optional, Any
 from security_utils import SECURITY_LOGGER
 
 logger = SECURITY_LOGGER
 
 class RiskEngine:
 	# Threshold here is up for change
-	def __init__(self, vector_store, threshold: float = 0.7):
+	def __init__(self, vector_store, threshold: float = 0.65):
 		self.store = vector_store
 		self.threshold = threshold
 
