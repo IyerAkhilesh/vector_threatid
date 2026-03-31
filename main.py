@@ -1,6 +1,8 @@
-from pathlib import Path
+# from pathlib import Path
 from typing import Optional
 
+from json import JSONDecodeError
+from adapters import sop_adapter
 from adapters.chroma_adapter import ChromaAdapter
 from adapters.sop_adapter import SOPAdapter
 from core.risk_engine import RiskEngine
@@ -72,10 +74,13 @@ def append_to_risk_register(analysis, ip, impact_value=0.9, asset_value=50000) -
 
 		# Write to CSV
 		file_exists = os.path.isfile(file_path)
+		print(f"[*] Appending new risk entry to register at {file_path}")
 		with open(file_path, "a", newline='') as f:
 			writer = csv.DictWriter(f, fieldnames=headers)
 			if not file_exists:
+				print(f"[*] Risk register not found. Creating new file and adding header.")
 				writer.writeheader()
+			print(f"[*] Appending new risk entry to register")
 			writer.writerow(new_entry)
 		return True
 	except FileNotFoundError:
@@ -105,7 +110,15 @@ def main():
 	# B. SOP collection and adapter
 	sop_adapter = ChromaAdapter(collection_name = "sop_playbooks")
 	sop_engine = SOPAdapter(vector_store = sop_adapter)
-
+	
+	sop_count = sop_engine.get_count()
+	logger.info(f"Current SOP playbooks in Vault: {sop_count}")
+	if sop_count == 0:
+		logger.warning("[!] SOP Vault is empty. Running ingestion script to ingest playbooks.")
+		sop_engine.populate_from_json("data/mitre_enterprise_attack.json", default_access_level=3)
+	else:
+		logger.info(f"[*] SOP Adapter Online. SOP Vault: {sop_count} playbooks loaded.")
+	
 	intel_count = chroma_adapter.get_count()
 	logger.info(f"Current items in Vault: {intel_count}")
 	if intel_count == 0:
@@ -114,7 +127,7 @@ def main():
 	logger.info(f"[*] Vector_ThreatID Online. Intelligence Vault: {intel_count} techniques loaded.")
 
 	# 2. Inject the adapter into the core RiskEngine and define the log aggregator
-	risk_engine = RiskEngine(vector_store = chroma_adapter, threshold = 0.7)
+	risk_engine = RiskEngine(vector_store = sop_adapter, threshold = 0.7)
 	log_aggregator = LogAggregator(window_size = 3)
 
 	logger.info("\n" + "="*60)
@@ -131,22 +144,28 @@ def main():
 				context_block = log_aggregator.aggregate_logs(ip, log_line)
 				analysis = risk_engine.evaluate_log(context_block)
 
+				# print(f"[*] Analyzing Window: {context_block}")
+				print(f"[*] Risk Score: {analysis['risk_score']}")
+
 				if analysis["trigger_rag"]:
-					logger.info(f"[*] Analyzing Window: {context_block}")
-					logger.info(f"[*] Risk Score: {analysis['risk_score']}")
 					logger.info(f"🚨 ALERT: Pattern detected! Similarity: {analysis['risk_score']}")
+					logger.info(f"[*] Analyzing Window: {context_block}")
 
 					mitre_id = analysis['matched_technique']['id']
 					logger.info(f"\n🚨 [THREAT DETECTED] Match: {mitre_id}")
 					status = append_to_risk_register(analysis, ip)
-					
+					if status:
+						logger.info(f"[*] Risk entry for {mitre_id} added to the register.")
+					else:
+						logger.error(f"[*] Failed to add risk entry for {mitre_id}.")
+
 					# Fetch the specific SOP for this MITRE Technique
 					playbook = sop_engine.get_playbook(mitre_id, access_level=3)
 					if playbook:
 						logger.info("-" * 30)
 						logger.info(f"SOP ID:\t	{playbook['sop_id']}")
-						logger.info(f"ACTION TEAM: {playbook['metadata']['Team']}")
-						logger.info(f"LOCATION:\t{playbook['metadata']['URL']}")
+						logger.info(f"ACTION TEAM: SOC")
+						logger.info(f"INSTRUCTION:\t{playbook['metadata'].get('name', 'No name')}")
 						logger.info(f"PROCEDURE:\t{playbook['instruction'][:100]}...")
 						logger.info("-" * 30 + "\n")
 					else:
@@ -159,3 +178,9 @@ if __name__ == '__main__':
 	except KeyboardInterrupt:
 		logger.info("\n[*] Keyboard interrupt! Exiting...")
 		sys.exit(0)
+	except ValueError as ve:
+		logger.error(f"Value error: {ve}")
+		sys.exit(1)
+	except PermissionError as pe:
+		logger.error(f"Permission error: {pe}")
+		sys.exit(1)

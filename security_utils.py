@@ -72,7 +72,7 @@ def validate_and_sanitize_log_line(log_line: str, max_length: int = 4096) -> Opt
     log_line = log_line.strip()
     
     # Remove control characters
-    log_line = ''.join(c for c in log_line if ord(c) >= 32 or c in '\t\n\r')
+    log_line = ''.join(c for c in log_line if (c.isprintable() or c in '\t\n\r') and c != '\x00')
     
     return log_line
 
@@ -102,7 +102,7 @@ def sanitize_csv_field(value: Any) -> str:
     value_str = str(value)
     
     # Remove control characters that could break CSV
-    value_str = ''.join(c for c in value_str if ord(c) >= 32 or c == '\t')
+    value_str = ''.join(c for c in value_str if (c.isprintable() or c == '\t') and c != '\x00')
     
     # Escape quotes
     value_str = value_str.replace('"', '""')
@@ -289,6 +289,7 @@ def query_local_llm_safely(prompt: str, max_retries: int = 3) -> Optional[str]:
     except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
         SECURITY_LOGGER.error(f"LLM query failed: {e}")
         return None
+
 
 
 # ============================================================================

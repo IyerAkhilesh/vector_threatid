@@ -1,0 +1,26 @@
+Risk ID,Risk Description,Risk Category,Probability,Impact,Risk Score,Ranking,EMV,Response,Trigger (KRI),Owner,Status
+RS-T1568.003,Detected Unknown Technique from 203.0.113.9,Technical/Cyber,0.7134,0.9,0.6421,Critical,$-35670.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1037.002,Detected Unknown Technique from 203.0.113.55,Technical/Cyber,0.7026,0.9,0.6323,Critical,$-35130.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1037.002,Detected Unknown Technique from 10.0.0.200,Technical/Cyber,0.7057,0.9,0.6351,Critical,$-35285.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1021.004,Detected Unknown Technique from 198.51.100.101,Technical/Cyber,0.7008,0.9,0.6307,Critical,$-35040.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1056.003,Detected Unknown Technique from 10.0.0.200,Technical/Cyber,0.7054,0.9,0.6349,Critical,$-35270.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1184,Detected Unknown Technique from 198.51.100.101,Technical/Cyber,0.7035,0.9,0.6331,Critical,$-35175.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1056.003,Detected Unknown Technique from 172.16.3.45,Technical/Cyber,0.7018,0.9,0.6316,Critical,$-35090.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1547.015,Detected Unknown Technique from 10.0.0.200,Technical/Cyber,0.7078,0.9,0.637,Critical,$-35390.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1071.002,Detected Unknown Technique from 10.0.0.200,Technical/Cyber,0.7115,0.9,0.6404,Critical,$-35575.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1563,Detected Unknown Technique from 198.51.100.22,Technical/Cyber,0.7037,0.9,0.6333,Critical,$-35185.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1037.002,Detected Unknown Technique from 203.0.113.55,Technical/Cyber,0.7059,0.9,0.6353,Critical,$-35295.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1568.003,Detected Unknown Technique from 203.0.113.9,Technical/Cyber,0.7211,0.9,0.649,Critical,$-36055.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1021.004,Detected Unknown Technique from 10.0.0.200,Technical/Cyber,0.7053,0.9,0.6348,Critical,$-35265.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1071.002,Detected Unknown Technique from 10.0.0.12,Technical/Cyber,0.7442,0.9,0.6698,Critical,$-37210.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1021.004,Detected Unknown Technique from 198.51.100.101,Technical/Cyber,0.7053,0.9,0.6348,Critical,$-35265.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1021.004,Detected Unknown Technique from 198.51.100.101,Technical/Cyber,0.7023,0.9,0.6321,Critical,$-35115.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1071.002,Detected Unknown Technique from 10.0.0.12,Technical/Cyber,0.7217,0.9,0.6495,Critical,$-36085.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1184,Detected Unknown Technique from 198.51.100.101,Technical/Cyber,0.7311,0.9,0.658,Critical,$-36555.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1043,Detected Unknown Technique from 203.0.113.9,Technical/Cyber,0.7113,0.9,0.6402,Critical,$-35565.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1071,Detected Unknown Technique from 203.0.113.9,Technical/Cyber,0.7098,0.9,0.6388,Critical,$-35490.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1071.002,Detected Unknown Technique from 198.51.100.22,Technical/Cyber,0.7307,0.9,0.6576,Critical,$-36535.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1021.004,Detected Unknown Technique from 203.0.113.9,Technical/Cyber,0.7071,0.9,0.6364,Critical,$-35355.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1021.004,Detected Unknown Technique from 10.0.0.200,Technical/Cyber,0.7077,0.9,0.6369,Critical,$-35385.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1094,Detected Unknown Technique from 198.51.100.22,Technical/Cyber,0.7,0.9,0.63,Critical,$-35000.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified
+RS-T1021.004,Detected Unknown Technique from 172.16.3.45,Technical/Cyber,0.724,0.9,0.6516,Critical,$-36200.0,Execute SOP,Vector Match > 0.7,SOC Team,Identified

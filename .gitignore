@@ -219,3 +219,15 @@ __marimo__/
 **/vault_storage/*
 
 **/.vscode/*
+
+# Vault files
+**/vault_storage/*
+
+**/.vscode/*
+data/mitre_enterprise_attack.json
+vault_storage/88efb432-b803-4966-a86c-f378dc203042/data_level0.bin
+vault_storage/88efb432-b803-4966-a86c-f378dc203042/header.bin
+vault_storage/88efb432-b803-4966-a86c-f378dc203042/length.bin
+vault_storage/88efb432-b803-4966-a86c-f378dc203042/link_lists.bin
+vault_storage/f028f110-d500-45f4-93b9-8005754a05db/data_level0.bin
+vault_storage/chroma.sqlite3
