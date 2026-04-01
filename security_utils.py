@@ -33,25 +33,47 @@ def setup_security_logger() -> logging.Logger:
     log_dir.mkdir(exist_ok=True, mode=0o750)
     
     # File handler for security events
-    handler = RotatingFileHandler(
+    security_handler = RotatingFileHandler(
         log_dir / "security.log",
         maxBytes=10*1024*1024,  # 10MB
         backupCount=5
     )
-    handler.setLevel(logging.WARNING)
+    security_handler.setLevel(logging.WARNING)
     
     # Structured format with timestamp
     formatter = logging.Formatter(
         '%(asctime)s|%(name)s|%(levelname)s|%(filename)s:%(lineno)d|%(message)s',
         datefmt='%Y-%m-%dT%H:%M:%SZ'
     )
-    handler.setFormatter(formatter)
-    
-    logger.addHandler(handler)
+    security_handler.setFormatter(formatter)
+    logger.addHandler(security_handler)
     return logger
 
+def setup_general_logger() -> logging.Logger:
+    """Configure general application logger."""
+    logger = logging.getLogger("vectorthreatid.general")
+    logger.setLevel(logging.INFO)
+    
+    # Create logs directory
+    log_dir = Path(__file__).parent / "logs"
+    log_dir.mkdir(exist_ok=True, mode=0o750)
+    
+    # File handler for general events
+    general_handler = RotatingFileHandler(
+        log_dir / "app.log",
+        maxBytes=30*1024*1024,  # 30MB
+        backupCount=5
+    )
+    general_handler.setLevel(logging.INFO)
+    
+    formatter = logging.Formatter('%(asctime)s|%(name)s|%(levelname)s|%(message)s')
+    general_handler.setFormatter(formatter)
+    logger.addHandler(general_handler)
+    
+    return logger
 
 SECURITY_LOGGER = setup_security_logger()
+GENERAL_LOGGER = setup_general_logger()
 
 
 # ============================================================================
@@ -68,8 +90,10 @@ def validate_and_sanitize_log_line(log_line: str, max_length: int = 4096) -> Opt
         SECURITY_LOGGER.warning(f"Log exceeds max length: {len(log_line)} > {max_length}. Truncating to fit the limit.")
         log_line = log_line[:max_length]
     
-    # Replace all malicious characters to prevent log injection
-    log_line = log_line.replace('<', '&lt;').replace('>', '&gt;').replace('&', '&amp;')
+    import html
+    # Replace all malicious characters to prevent log injection and XSS if logs are viewed in a web interface: <, >, &, ", '
+    log_line = html.escape(log_line) 
+
 
     # Escape \\ to prevent backslash injection issues in logs
     log_line = log_line.replace('\\', '\\\\')
@@ -84,7 +108,7 @@ def validate_and_sanitize_log_line(log_line: str, max_length: int = 4096) -> Opt
     log_line = log_line.strip()
     
     # Remove control characters
-    log_line = ''.join(c for c in log_line if (c.isprintable() or c in '\t\n\r') and c != '\x00')
+    log_line = ''.join(c for c in log_line if c.isprintable() and c not in ['\x00', '\t', '\n', '\r'])
     
     return log_line
 
@@ -114,7 +138,7 @@ def sanitize_csv_field(value: Any) -> str:
     value_str = str(value)
     
     # Remove control characters that could break CSV
-    value_str = ''.join(c for c in value_str if (c.isprintable() or c == '\t') and c != '\x00')
+    value_str = ''.join(c for c in value_str if c.isprintable() and c not in ['\x00', '\t', '\n', '\r'])
     
     # Escape quotes
     value_str = value_str.replace('"', '""')
