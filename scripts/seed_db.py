@@ -10,7 +10,7 @@ def seed():
 		db_path = os.path.join(project_root, "vault_storage")
 		
 		client = chromadb.PersistentClient(path=db_path)
-		collection = client.get_or_create_collection(name="vector_threatid_vault", metadata = {"hnsw:space": "cosine"})   # Explicitly setting the search metric
+		collection = client.get_or_create_collection(name="threat_frameworks", metadata = {"hnsw:space": "cosine"})   # Explicitly setting the search metric
 
 		techniques = [
 			{

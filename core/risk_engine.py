@@ -16,7 +16,7 @@ class RiskEngine:
 		# Ingest the OWASP standards once (they load from the cache if its < 7 days old)
 		owasp_ingester = OwaspIngestor()
 		self.owasp_standards = owasp_ingester.get_owasp_data()
-		logger.info(f"RiskEngine online with {len(self.owasp_standards)} OWASP categories loaded.")
+		logger.info(f"RiskEngine online with {len(self.owasp_standards.values())} OWASP categories loaded.")
 
 
 	def _get_semantic_anchor(self, context_block) -> tuple[Optional[str], Optional[str]]:
@@ -24,11 +24,12 @@ class RiskEngine:
 		Dynamically scans the log for OWASP keywords to 'anchor' the vector query.
 		This provides the semantic 'hint' ChromaDB needs to break the 0.5 score barrier.
 		"""
-		for category in self.owasp_standards:
+		for keyword in self.owasp_standards.get('common_vectors', []):
 			# Check 'common_vectors' list from the dynamic OWASP cache
-			keywords = category.get('common_vectors', [])
-			if any(keyword.lower() in context_block.lower() for keyword in keywords):
-				return category['id'], category['name']
+			if keyword.lower() in context_block.lower():
+				logger.debug(f"Semantic anchor found: '{keyword}' in log line. Using OWASP category '{self.owasp_standards.get('name')}' to enrich the query.")
+				return self.owasp_standards.get('id'), self.owasp_standards.get('name')
+		logger.debug("No semantic anchor found in log line.")
 		return None, None
 
 	def evaluate_log(self, context_block: str) -> Dict[str, Any]:
@@ -62,7 +63,6 @@ class RiskEngine:
 			tau = 0.65
 			risk_score = round(math.exp(-cosine_distance * tau), 4)
 			is_critical = risk_score >= self.threshold
-
 			return {
 				"risk_score": risk_score,
 				"trigger_rag": is_critical,

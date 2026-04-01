@@ -1,0 +1,62 @@
+[
+  {
+    "rank": 1,
+    "id": "A01:2021",
+    "name": "Broken Access Control",
+    "description": "Restrictions on what authenticated users are allowed to do are not properly enforced, allowing unauthorized access to data or functions."
+  },
+  {
+    "rank": 2,
+    "id": "A02:2021",
+    "name": "Cryptographic Failures",
+    "description": "Failures related to cryptography (or lack thereof) which often lead to sensitive data exposure or system compromise."
+  },
+  {
+    "rank": 3,
+    "id": "A03:2021",
+    "name": "Injection",
+    "description": "User-supplied data is not validated, filtered, or sanitized by the application, allowing attackers to inject malicious commands (e.g., SQL, NoSQL, OS)."
+  },
+  {
+    "rank": 4,
+    "id": "A04:2021",
+    "name": "Insecure Design",
+    "description": "A broad category focusing on risks related to design flaws and architectural gaps, requiring more threat modeling and secure design patterns."
+  },
+  {
+    "rank": 5,
+    "id": "A05:2021",
+    "name": "Security Misconfiguration",
+    "description": "Insecure default configurations, incomplete or ad hoc configurations, open cloud storage, or misconfigured HTTP headers."
+  },
+  {
+    "rank": 6,
+    "id": "A06:2021",
+    "name": "Vulnerable and Outdated Components",
+    "description": "Risks arising from using components (libraries, frameworks, and other software modules) that are unsupported, out of date, or vulnerable."
+  },
+  {
+    "rank": 7,
+    "id": "A07:2021",
+    "name": "Identification and Authentication Failures",
+    "description": "Problems with confirmation of the user's identity, authentication, and session management (formerly known as Broken Authentication)."
+  },
+  {
+    "rank": 8,
+    "id": "A08:2021",
+    "name": "Software and Data Integrity Failures",
+    "description": "Code and infrastructure that does not protect against integrity violations, such as using untrusted plugins or unverified CI/CD pipelines."
+  },
+  {
+    "rank": 9,
+    "id": "A09:2021",
+    "name": "Security Logging and Monitoring Failures",
+    "description": "Insufficient logging, detection, and monitoring that allow attackers to maintain persistence and continue to extract data."
+  },
+  {
+    "rank": 10,
+    "id": "A10:2021",
+    "name": "Server-Side Request Forgery (SSRF)",
+    "description": "A web security vulnerability that allows an attacker to induce the server-side application to make requests to an unintended location."
+  }
+]
