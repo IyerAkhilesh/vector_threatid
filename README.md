@@ -34,8 +34,10 @@ Column: Description ->
 
   - Seed the Vault: Initialize ChromaDB with the MITRE ATT&CK intelligence.
 
-    Bash --> 
-      python scripts/sync_mitre_data.py
+    Bash -->
+      python -m scripts.seed_db
+      python -m scripts.sync_mitre_data
+      python -m scripts.inject_mitre_data
 
   - Execute Analysis:
 
