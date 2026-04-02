@@ -27,22 +27,48 @@ Column: Description ->
   7. Current mitigation status: The status of mitigation of the risk (e.g., In-Progress)
 
 # Installation
+
   - Clone & Install:
 
     Bash -->  
-      git clone https://github.com/IyerAkhilesh/vector_threatid.git && cd vector_threatid
 
+      **git clone https://github.com/IyerAkhilesh/vector_threatid.git && cd vector_threatid**
+
+
+  - Create a Virtual Environment(sandbox) and activate it:
+
+    Bash -->
+
+      **python -m venv venv**
+
+      macOS/Linux: **source venv/bin/activate**
+
+      Windows: **.\venv\Scripts\activate**
+
+  
+  - Install requirements from requirements.txt:
+
+    Bash -->
+
+      **python -m pip install -r requirements.txt**
+    
+  
   - Seed the Vault: Initialize ChromaDB with the MITRE ATT&CK intelligence.
 
     Bash -->
-      python -m scripts.seed_db
-      python -m scripts.sync_mitre_data
-      python -m scripts.inject_mitre_data
+
+      **python -m scripts.seed_db**
+    
+      **python -m scripts.sync_mitre_data**
+
+      **python -m scripts.inject_mitre_data**
+
 
   - Execute Analysis:
 
     Bash --> 
-      python main.py
+
+      **python main.py**
 
 # Core Technologies
   1. Vector Store: ChromaDB (HNSW Cosine Space)
